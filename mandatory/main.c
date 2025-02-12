@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:51:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/12 13:39:22 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/12 15:26:13 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,8 @@ void	process_cmd2(t_data *data)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	clean_child_ressources(data);
-	if (data->exist_cmd2)
-	{
-		if (execve(data->cmd2[0], data->cmd2, NULL) == -1)
-			perror("execve");
-	}
+	if (execve(data->cmd2[0], data->cmd2, NULL) == -1 && data->exist_cmd2)
+		perror("execve");
 	clean_and_exit(data, get_exit_code());
 }
 
