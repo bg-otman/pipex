@@ -1,28 +1,35 @@
-SRCS = mandatory/main.c mandatory/free_arr.c mandatory/clean_and_exit.c mandatory/verify_cmds.c \
+SRCS = mandatory/main.c mandatory/clean_and_exit.c mandatory/verify_cmds.c mandatory/helper_functions.c \
 	get_next_line/get_next_line.c get_next_line/get_next_line_utils.c
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
+PRINTF = printf/ftprintf.a
 OBJS = $(SRCS:.c=.o)
 NAME = pipex
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+$(NAME): $(OBJS) $(LIBFT) $(PRINTF)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(PRINTF) -o $(NAME)
 
 $(LIBFT) :
 	@$(MAKE) -C libft
+
+$(PRINTF) :
+	@$(MAKE) -C printf
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm -f mandatory/*.o libft/*.o get_next_line/*.o
+	@rm -f $(OBJS)
+	@$(MAKE) -C libft clean
+	@$(MAKE) -C printf clean
 
 fclean: clean
 	@rm -f $(NAME)
-# @rm -f $(NAME) $(LIBFT)
+	@$(MAKE) -C libft fclean
+	@$(MAKE) -C printf fclean
 
 re: fclean all
 

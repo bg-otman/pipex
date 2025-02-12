@@ -6,23 +6,47 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 16:09:28 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/10 12:56:33 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/12 12:52:38 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void    clean_and_exit(t_data *data, int status)
+int	get_exit_code(void)
 {
-    if (data->cmd1)
-        free_arr(data->cmd1);
-    if (data->cmd2)
-        free_arr(data->cmd2);
-    if (data->paths)
-        free_arr(data->paths);
-    close(data->fd_infile);
-    close(data->fd_outfile);
-    close(data->pipe[0]);
-    close(data->pipe[1]);
-    exit(status);
+	if (errno == ENOENT)
+		return (127);
+	else if (errno == EACCES)
+		return (126);
+	else
+		return (1);
+}
+
+void	close_fd(int fd)
+{
+	if (fd != -1)
+		close(fd);
+}
+
+void	clean_child_ressources(t_data *data)
+{
+	close_fd(data->fd_infile);
+	close_fd(data->fd_outfile);
+	close_fd(data->pipe[0]);
+	close_fd(data->pipe[1]);
+}
+
+void	clean_and_exit(t_data *data, int status)
+{
+	if (data->cmd1)
+		free_arr(data->cmd1);
+	if (data->cmd2)
+		free_arr(data->cmd2);
+	if (data->paths)
+		free_arr(data->paths);
+	close_fd(data->fd_infile);
+	close_fd(data->fd_outfile);
+	close_fd(data->pipe[0]);
+	close_fd(data->pipe[1]);
+	exit(status);
 }
