@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:52:42 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/12 13:34:00 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/13 11:53:44 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "../get_next_line/get_next_line.h"
 # include "../libft/libft.h"
-# include "../printf/ft_printf.h"
 # include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
@@ -42,8 +41,11 @@ void		get_execs_paths(t_data *data, char *envp[]);
 void		clean_and_exit(t_data *data, int status);
 void		clean_child_ressources(t_data *data);
 void		open_files(t_data *data, char *av[]);
+void		put_error(char *msg, char *cmd);
 void		free_arr(char **arr);
 void		close_fd(int fd);
+int			check_cmds_path(char *path, char *cmd);
 int			get_exit_code(void);
+int			ft_count_args(char *cmd);
 
 #endif

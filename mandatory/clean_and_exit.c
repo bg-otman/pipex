@@ -6,11 +6,24 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 16:09:28 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/12 15:19:09 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/13 11:42:38 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void	free_arr(char **arr)
+{
+	int	i;
+
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i++]);
+	}
+	free(arr);
+	arr = NULL;
+}
 
 int	get_exit_code(void)
 {

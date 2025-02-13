@@ -6,23 +6,31 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/12 13:02:32 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/13 12:08:52 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	free_arr(char **arr)
+void	put_error(char *msg, char *cmd)
 {
-	int	i;
+	ft_putstr_fd(msg, 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd("\n", 2);
+}
 
-	i = 0;
-	while (arr[i])
+int	check_cmds_path(char *path, char *cmd)
+{
+	char	*temp;
+
+	temp = ft_strjoin(path, cmd);
+	if (access(temp, F_OK) == 0)
 	{
-		free(arr[i++]);
+		free(temp);
+		return (1);
 	}
-	free(arr);
-	arr = NULL;
+	free(temp);
+	return (0);
 }
 
 void	open_files(t_data *data, char *av[])
@@ -45,6 +53,33 @@ void	open_files(t_data *data, char *av[])
 			exit(EXIT_FAILURE);
 		}
 	}
+}
+
+int	ft_count_args(char *cmd)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (cmd[i])
+	{
+		while (cmd[i] == ' ')
+			i++;
+		if (cmd[i] == '\'')
+		{
+			i++;
+			while (cmd[i] && cmd[i] != '\'')
+				i++;
+			if (cmd[i] == '\'')
+				i++;
+		}
+		else
+			while (cmd[i] && cmd[i] != ' ' && cmd[i] != '\'')
+				i++;
+		count++;
+	}
+	return (count);
 }
 
 void	get_execs_paths(t_data *data, char *envp[])

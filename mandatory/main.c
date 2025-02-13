@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:51:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/12 15:26:13 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/13 11:51:18 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	process_cmd1(t_data *data)
 {
 	if (!data->exist_cmd1)
-		ft_printf("Command not found : %s\n", data->cmd1[0]);
+		put_error("Command not found : ", data->cmd1[0]);
 	if (dup2(data->fd_infile, STDIN_FILENO) == -1)
 	{
 		perror("dup2");
@@ -38,7 +38,7 @@ void	process_cmd1(t_data *data)
 void	process_cmd2(t_data *data)
 {
 	if (!data->exist_cmd2)
-		ft_printf("Command not found : %s\n", data->cmd2[0]);
+		put_error("Command not found : ", data->cmd2[0]);
 	if (dup2(data->pipe[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2");
