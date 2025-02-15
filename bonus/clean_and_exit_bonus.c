@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   clean_and_exit.c                                   :+:      :+:    :+:   */
+/*   clean_and_exit_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 16:09:28 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/14 18:48:08 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/15 13:40:27 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	free_arr(char **arr)
 {
@@ -41,20 +41,18 @@ void	close_fd(int fd)
 		close(fd);
 }
 
-void	clean_child_ressources(t_data *data)
+void	clean_child_ressources(t_data *data, int prev_pipe)
 {
 	close_fd(data->fd_infile);
 	close_fd(data->fd_outfile);
-	close_fd(data->pipe[0]);
 	close_fd(data->pipe[1]);
+	close_fd(prev_pipe);
 }
 
 void	clean_and_exit(t_data *data, int status)
 {
-	if (data->cmd1)
-		free_arr(data->cmd1);
-	if (data->cmd2)
-		free_arr(data->cmd2);
+	if (data->cmd)
+		free_arr(data->cmd);
 	if (data->paths)
 		free_arr(data->paths);
 	close_fd(data->fd_infile);

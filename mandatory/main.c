@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:51:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/13 12:58:47 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/13 16:16:45 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	process_cmd1(t_data *data)
 {
-	if (!data->exist_cmd1)
+	if (!data->exist_cmd1 && !data->invalid_infile)
 		put_error("Command not found : ", data->cmd1[0]);
 	if (dup2(data->fd_infile, STDIN_FILENO) == -1)
 	{
@@ -114,7 +114,10 @@ int	main(int ac, char *av[], char *envp[])
 	open_files(&data, av);
 	get_execs_paths(&data, envp);
 	if (pipe(data.pipe) == -1)
+	{
+		perror("pipe");
 		clean_and_exit(&data, EXIT_FAILURE);
+	}
 	verify_cmds(&data, av[2], av[3]);
 	handle_first_child(&data);
 	handle_second_child(&data);

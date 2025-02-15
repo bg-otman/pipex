@@ -1,22 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helper_functions.c                                 :+:      :+:    :+:   */
+/*   helper_functions_bonus.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/14 10:12:29 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/15 12:27:22 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	put_error(char *msg, char *cmd)
 {
-	ft_putstr_fd(msg, 2);
-	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd("\n", 2);
+	char	*full_msg;
+	char	*temp;
+
+	temp = ft_strjoin(msg, cmd);
+	if (!temp)
+		return ;
+	full_msg = ft_strjoin(temp, "\n");
+	free(temp);
+	if (!full_msg)
+		return ;
+	write(2, full_msg, ft_strlen(full_msg));
+	free(full_msg);
 }
 
 int	check_cmds_path(char *path, char *cmd)
@@ -33,9 +42,9 @@ int	check_cmds_path(char *path, char *cmd)
 	return (0);
 }
 
-void	open_files(t_data *data, char *av[])
+void	open_files(t_data *data, char *av[], int ac)
 {
-	data->fd_outfile = open(av[4], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	data->fd_outfile = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (data->fd_outfile == -1)
 	{
 		perror("outfile");
