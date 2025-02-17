@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 15:18:33 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/13 12:09:52 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 21:24:31 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,9 @@ char	**split_cmd(char *cmd)
 	char	**cmd_arg;
 
 	int (i), (k);
-	if (!cmd)
-		return (NULL);
 	i = 0;
 	k = 0;
-	cmd_arg = malloc(sizeof(char *) * (ft_count_args(cmd) + 1));
+	cmd_arg = ft_calloc((ft_count_args(cmd) + 1), sizeof(char *));
 	if (!cmd_arg)
 		return (perror("Allocation fail"), NULL);
 	while (cmd[i])
@@ -77,7 +75,13 @@ char	**split_cmd(char *cmd)
 		else
 			handle_normal_word(cmd, cmd_arg, &i, &k);
 	}
-	cmd_arg[k] = NULL;
+	if (cmd_arg[0] == NULL)
+	{
+		free_arr(cmd_arg);
+		cmd_arg = ft_split("/", ' ');
+	}
+	else
+		cmd_arg[k] = NULL;
 	return (cmd_arg);
 }
 

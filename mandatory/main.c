@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:51:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/13 16:16:45 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 22:02:32 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ int	main(int ac, char *av[], char *envp[])
 		return (1);
 	}
 	ft_bzero(&data, sizeof(data));
-	open_files(&data, av);
 	get_execs_paths(&data, envp);
+	open_files(&data, av);
 	if (pipe(data.pipe) == -1)
 	{
 		perror("pipe");

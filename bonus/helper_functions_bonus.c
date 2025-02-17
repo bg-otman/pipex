@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 17:02:34 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 22:17:48 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,29 +89,4 @@ int	ft_count_args(char *cmd)
 		count++;
 	}
 	return (count);
-}
-
-void	get_execs_paths(t_data *data, char *envp[])
-{
-	char	*temp;
-	int		i;
-
-	i = 0;
-	while (envp[i])
-	{
-		if (!ft_strncmp(envp[i], "PATH=", 5))
-		{
-			data->paths = ft_split(envp[i] + 5, ':');
-			break ;
-		}
-		i++;
-	}
-	i = 0;
-	while (data->paths[i])
-	{
-		temp = ft_strjoin(data->paths[i], "/");
-		free(data->paths[i]);
-		data->paths[i] = temp;
-		i++;
-	}
 }
