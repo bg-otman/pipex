@@ -7,17 +7,17 @@ LIBFT = libft/libft.a
 OBJS = $(SRCS:.c=.o)
 OBJS_BNS = $(SRCS_BNS:.c=.o)
 NAME = pipex
-NAME_BNS = pipex_bonus
 
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT)
 	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
 
-bonus: $(NAME_BNS)
+bonus: .bonus
 
-$(NAME_BNS) : $(OBJS_BNS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS_BNS) $(LIBFT) -o $(NAME_BNS)
+.bonus : $(OBJS_BNS) $(LIBFT)
+	@$(CC) $(CFLAGS) $(OBJS_BNS) $(LIBFT) -o $(NAME)
+	@touch .bonus
 
 $(LIBFT) :
 	@$(MAKE) -C libft
@@ -26,11 +26,11 @@ $(LIBFT) :
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm -f $(OBJS) $(OBJS_BNS)
+	@rm -f $(OBJS) $(OBJS_BNS) .bonus
 	@$(MAKE) -C libft clean
 
 fclean: clean
-	@rm -f $(NAME) $(NAME_BNS)
+	@rm -f $(NAME)
 	@$(MAKE) -C libft fclean
 
 re: fclean all
