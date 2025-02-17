@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/14 10:12:29 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 17:42:07 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ void	get_execs_paths(t_data *data, char *envp[])
 		if (!ft_strncmp(envp[i], "PATH=", 5))
 		{
 			data->paths = ft_split(envp[i] + 5, ':');
+			if (!data->paths)
+				(perror("allocation fail"), clean_and_exit(data, EXIT_FAILURE));
 			break ;
 		}
 		i++;
@@ -101,6 +103,8 @@ void	get_execs_paths(t_data *data, char *envp[])
 	while (data->paths[i])
 	{
 		temp = ft_strjoin(data->paths[i], "/");
+		if (!temp)
+			(perror("allocation fail"), clean_and_exit(data, EXIT_FAILURE));
 		free(data->paths[i]);
 		data->paths[i] = temp;
 		i++;

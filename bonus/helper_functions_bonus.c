@@ -6,27 +6,11 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/15 12:27:22 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 17:02:34 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
-void	put_error(char *msg, char *cmd)
-{
-	char	*full_msg;
-	char	*temp;
-
-	temp = ft_strjoin(msg, cmd);
-	if (!temp)
-		return ;
-	full_msg = ft_strjoin(temp, "\n");
-	free(temp);
-	if (!full_msg)
-		return ;
-	write(2, full_msg, ft_strlen(full_msg));
-	free(full_msg);
-}
 
 int	check_cmds_path(char *path, char *cmd)
 {
@@ -42,13 +26,32 @@ int	check_cmds_path(char *path, char *cmd)
 	return (0);
 }
 
+void	open_here_doc_file(t_data *data)
+{
+	data->fd_infile = open("/tmp/.tmp_here_doc", O_RDONLY);
+	if (data->fd_infile == -1)
+	{
+		perror("here_doc tmp file");
+		clean_and_exit(data, EXIT_FAILURE);
+	}
+}
+
 void	open_files(t_data *data, char *av[], int ac)
 {
-	data->fd_outfile = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (data->here_doc)
+		data->fd_outfile = open(av[ac - 1], O_CREAT | O_WRONLY | O_APPEND,
+				0644);
+	else
+		data->fd_outfile = open(av[ac - 1], O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (data->fd_outfile == -1)
 	{
 		perror("outfile");
-		exit(EXIT_FAILURE);
+		clean_and_exit(data, EXIT_FAILURE);
+	}
+	if (data->here_doc)
+	{
+		open_here_doc_file(data);
+		return ;
 	}
 	data->fd_infile = open(av[1], O_RDONLY);
 	if (data->fd_infile == -1)
@@ -57,10 +60,7 @@ void	open_files(t_data *data, char *av[], int ac)
 		data->fd_infile = open("/dev/null", O_RDONLY);
 		data->invalid_infile = 1;
 		if (data->fd_infile == -1)
-		{
-			close(data->fd_outfile);
-			exit(EXIT_FAILURE);
-		}
+			clean_and_exit(data, EXIT_FAILURE);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 16:09:28 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/15 13:40:27 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 09:12:25 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	clean_and_exit(t_data *data, int status)
 		free_arr(data->cmd);
 	if (data->paths)
 		free_arr(data->paths);
+	if (data->limiter)
+		free(data->limiter);
 	close_fd(data->fd_infile);
 	close_fd(data->fd_outfile);
 	close_fd(data->pipe[0]);

@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 15:35:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/13 16:28:40 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/17 17:34:33 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void	handle_normal_word(char *cmd, char **cmd_arg, int *i, int *k)
 		cmd_arg[(*k)++] = ft_substr(cmd, j, *i - j);
 }
 
-char	**split_cmd(char *cmd)
+static char	**split_cmd(char *cmd)
 {
 	char	**cmd_arg;
 
