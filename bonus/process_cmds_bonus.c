@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/15 13:56:49 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 16:15:09 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/20 23:13:48 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	process_first_cmd(t_data *data, char *cmd)
 		perror("dup2");
 		clean_and_exit(data, EXIT_FAILURE);
 	}
-	clean_child_ressources(data, -1);
+	clean_child_ressources(data, data->pipe[0]);
 	if (!data->invalid_infile)
 	{
 		if (data->exist_cmd && execve(data->cmd[0], data->cmd, NULL) == -1)
@@ -52,9 +52,12 @@ static void	process_middle_cmd(t_data *data, char *cmd, int prev_pipe)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	clean_child_ressources(data, prev_pipe);
-	if (execve(data->cmd[0], data->cmd, NULL) == -1 && data->exist_cmd)
+	if (data->exist_cmd && execve(data->cmd[0], data->cmd, NULL) == -1)
 		perror("execve");
-	clean_and_exit(data, get_exit_code());
+	if (!data->exist_cmd)
+		clean_and_exit(data, 127);
+	else
+		clean_and_exit(data, get_exit_code());
 }
 
 static void	process_last_cmd(t_data *data, char *cmd, int prev_pipe)
@@ -73,9 +76,12 @@ static void	process_last_cmd(t_data *data, char *cmd, int prev_pipe)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	clean_child_ressources(data, prev_pipe);
-	if (execve(data->cmd[0], data->cmd, NULL) == -1 && data->exist_cmd)
+	if (data->exist_cmd && execve(data->cmd[0], data->cmd, NULL) == -1)
 		perror("execve");
-	clean_and_exit(data, get_exit_code());
+	if (!data->exist_cmd)
+		clean_and_exit(data, 127);
+	else
+		clean_and_exit(data, get_exit_code());
 }
 
 pid_t	process_cmds(t_data *data, char *args[], int *prev_pipe, int i)

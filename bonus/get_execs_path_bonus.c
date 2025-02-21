@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/17 21:55:10 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 22:21:19 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 09:40:12 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,24 +29,41 @@ static void	set_slash(t_data *data)
 	}
 }
 
-void	get_execs_paths(t_data *data, char *envp[])
+static void	get_path(t_data *data, char *env[])
 {
 	int	i;
 
 	i = 0;
-	while (envp[i])
+	while (env[i])
 	{
-		if (!ft_strncmp(envp[i], "PATH=", 5))
+		if (!ft_strncmp(env[i], "PATH=", 5))
 		{
-			data->paths = ft_split(envp[i] + 5, ':');
+			data->paths = ft_split(env[i] + 5, ':');
 			if (!data->paths)
 				(perror("allocation fail"), clean_and_exit(data, EXIT_FAILURE));
 			break ;
 		}
 		i++;
 	}
+}
+
+void	get_execs_paths(t_data *data, char *env[])
+{
+	if (!env[0])
+	{
+		data->paths = ft_split("/usr/bin/:/bin/:/usr/local/bin/", ':');
+		if (!data->paths)
+			(perror("allocation fail"), clean_and_exit(data, EXIT_FAILURE));
+		return ;
+	}
+	get_path(data, env);
 	if (!data->paths)
-		(ft_putstr_fd("PATH NOT FOUND\n", 2), clean_and_exit(data,
-				EXIT_FAILURE));
+	{
+		data->paths = ft_calloc(2, sizeof(char *));
+		data->paths[0] = ft_strdup("");
+		if (!data->paths || !data->paths[0])
+			(perror("allocation fail"), clean_and_exit(data, EXIT_FAILURE));
+		return ;
+	}
 	set_slash(data);
 }

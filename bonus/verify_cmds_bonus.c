@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 15:35:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 21:26:17 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 18:09:44 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	set_cmd_path(char **cmd, char *path, int *exist_flag)
 {
 	char	*temp;
 
-	if ((*cmd)[0] == '/')
+	if (ft_search(*cmd, '/'))
 	{
 		*exist_flag = 1;
 		return ;
@@ -89,7 +89,12 @@ void	verify_cmd(t_data *data, char *cmd)
 {
 	int	i;
 
-	data->cmd = split_cmd(cmd);
+	if (!ft_strcmp(cmd, ""))
+		data->cmd = ft_split(".", ' ');
+	else if (is_all_space(cmd))
+		data->cmd = ft_split("\t", ' ');
+	else
+		data->cmd = split_cmd(cmd);
 	if (!data->cmd)
 	{
 		perror("Allocation fail");

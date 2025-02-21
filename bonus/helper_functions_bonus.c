@@ -6,11 +6,27 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 22:17:48 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/20 21:51:04 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+
+void	put_error(char *msg, char *cmd)
+{
+	char	*full_msg;
+	char	*temp;
+
+	temp = ft_strjoin(msg, cmd);
+	if (!temp)
+		return ;
+	full_msg = ft_strjoin(temp, "\n");
+	free(temp);
+	if (!full_msg)
+		return ;
+	write(2, full_msg, ft_strlen(full_msg));
+	free(full_msg);
+}
 
 int	check_cmds_path(char *path, char *cmd)
 {

@@ -6,16 +6,17 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:51:56 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 22:02:32 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 10:45:45 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	process_cmd1(t_data *data)
+static void	process_first_cmd(t_data *data, char *cmd)
 {
-	if (!data->exist_cmd1 && !data->invalid_infile)
-		put_error("Command not found : ", data->cmd1[0]);
+	verify_cmd(data, cmd);
+	if (!data->exist_cmd && !data->invalid_infile)
+		put_error("Command not found : ", data->cmd[0]);
 	if (dup2(data->fd_infile, STDIN_FILENO) == -1)
 	{
 		perror("dup2");
@@ -29,16 +30,17 @@ void	process_cmd1(t_data *data)
 	clean_child_ressources(data);
 	if (!data->invalid_infile)
 	{
-		if (data->exist_cmd1 && execve(data->cmd1[0], data->cmd1, NULL) == -1)
+		if (data->exist_cmd && execve(data->cmd[0], data->cmd, data->env) == -1)
 			perror("execve");
 	}
 	clean_and_exit(data, get_exit_code());
 }
 
-void	process_cmd2(t_data *data)
+static void	process_second_cmd(t_data *data, char *cmd)
 {
-	if (!data->exist_cmd2)
-		put_error("Command not found : ", data->cmd2[0]);
+	verify_cmd(data, cmd);
+	if (!data->exist_cmd)
+		put_error("Command not found : ", data->cmd[0]);
 	if (dup2(data->pipe[0], STDIN_FILENO) == -1)
 	{
 		perror("dup2");
@@ -50,12 +52,15 @@ void	process_cmd2(t_data *data)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	clean_child_ressources(data);
-	if (execve(data->cmd2[0], data->cmd2, NULL) == -1 && data->exist_cmd2)
+	if (data->exist_cmd && execve(data->cmd[0], data->cmd, data->env) == -1)
 		perror("execve");
-	clean_and_exit(data, get_exit_code());
+	if (!data->exist_cmd)
+		clean_and_exit(data, 127);
+	else
+		clean_and_exit(data, get_exit_code());
 }
 
-void	handle_first_child(t_data *data)
+void	handle_first_child(t_data *data, char *av[])
 {
 	pid_t	cpid;
 
@@ -66,19 +71,12 @@ void	handle_first_child(t_data *data)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	if (cpid == 0)
-		process_cmd1(data);
+		process_first_cmd(data, av[2]);
 	else
-	{
-		if (waitpid(cpid, NULL, 0) == -1)
-		{
-			perror("waitpid failed");
-			clean_and_exit(data, EXIT_FAILURE);
-		}
 		close_fd(data->pipe[1]);
-	}
 }
 
-void	handle_second_child(t_data *data)
+void	handle_second_child(t_data *data, char *av[])
 {
 	pid_t	cpid2;
 
@@ -89,19 +87,15 @@ void	handle_second_child(t_data *data)
 		clean_and_exit(data, EXIT_FAILURE);
 	}
 	if (cpid2 == 0)
-		process_cmd2(data);
+		process_second_cmd(data, av[3]);
 	else
 	{
 		close_fd(data->pipe[0]);
-		if (waitpid(cpid2, &data->exit_status, 0) == -1)
-		{
-			perror("waitpid failed");
-			clean_and_exit(data, EXIT_FAILURE);
-		}
+		wait_for_children(data, cpid2);
 	}
 }
 
-int	main(int ac, char *av[], char *envp[])
+int	main(int ac, char *av[], char *env[])
 {
 	t_data	data;
 
@@ -111,16 +105,16 @@ int	main(int ac, char *av[], char *envp[])
 		return (1);
 	}
 	ft_bzero(&data, sizeof(data));
-	get_execs_paths(&data, envp);
+	data.env = env;
+	get_execs_paths(&data, env);
 	open_files(&data, av);
 	if (pipe(data.pipe) == -1)
 	{
 		perror("pipe");
 		clean_and_exit(&data, EXIT_FAILURE);
 	}
-	verify_cmds(&data, av[2], av[3]);
-	handle_first_child(&data);
-	handle_second_child(&data);
+	handle_first_child(&data, av);
+	handle_second_child(&data, av);
 	if (WIFEXITED(data.exit_status))
 		data.exit_status = WEXITSTATUS(data.exit_status);
 	clean_and_exit(&data, data.exit_status);

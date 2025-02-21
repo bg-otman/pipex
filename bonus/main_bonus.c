@@ -6,29 +6,34 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:27:32 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 18:35:28 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 10:52:15 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-void	put_error(char *msg, char *cmd)
+static void	wait_for_children(t_data *data, pid_t last_cpid)
 {
-	char	*full_msg;
-	char	*temp;
+	int		i;
+	int		status;
+	pid_t	cpid;
 
-	temp = ft_strjoin(msg, cmd);
-	if (!temp)
-		return ;
-	full_msg = ft_strjoin(temp, "\n");
-	free(temp);
-	if (!full_msg)
-		return ;
-	write(2, full_msg, ft_strlen(full_msg));
-	free(full_msg);
+	i = 0;
+	while (i < data->cmds_num)
+	{
+		cpid = wait(&status);
+		if (cpid == -1)
+		{
+			perror("wait");
+			clean_and_exit(data, EXIT_FAILURE);
+		}
+		if (cpid == last_cpid && WIFEXITED(status))
+			data->exit_status = WEXITSTATUS(status);
+		i++;
+	}
 }
 
-static void	call_childs(t_data *data, char *args[])
+static void	call_children(t_data *data, char *args[])
 {
 	int		i;
 	int		prev_pipe;
@@ -50,11 +55,7 @@ static void	call_childs(t_data *data, char *args[])
 		i++;
 	}
 	close_fd(prev_pipe);
-	if (waitpid(last_cpid, &data->exit_status, 0) == -1)
-	{
-		perror("waitpid");
-		clean_and_exit(data, EXIT_FAILURE);
-	}
+	wait_for_children(data, last_cpid);
 }
 
 static void	handle_here_doc(t_data *data)
@@ -105,11 +106,12 @@ static void	validate_args(t_data *data, int ac, char *av[])
 	}
 }
 
-int	main(int ac, char *av[], char *envp[])
+int	main(int ac, char *av[], char *env[])
 {
 	t_data	data;
 
 	ft_bzero(&data, sizeof(data));
+	data.env = env;
 	validate_args(&data, ac, av);
 	if (data.here_doc)
 	{
@@ -119,13 +121,11 @@ int	main(int ac, char *av[], char *envp[])
 	else
 		data.cmds_num = ac - 3;
 	open_files(&data, av, ac);
-	get_execs_paths(&data, envp);
+	get_execs_paths(&data, env);
 	if (data.here_doc)
-		call_childs(&data, av + 3);
+		call_children(&data, av + 3);
 	else
-		call_childs(&data, av + 2);
-	if (WIFEXITED(data.exit_status))
-		data.exit_status = WEXITSTATUS(data.exit_status);
+		call_children(&data, av + 2);
 	clean_and_exit(&data, data.exit_status);
 	return (0);
 }

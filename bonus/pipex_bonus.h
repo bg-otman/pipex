@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 12:52:42 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/16 13:58:54 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 11:19:36 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_data
 {
 	char	**paths;
 	char	**cmd;
+	char	**env;
 	char	*limiter;
 	int		pipe[2];
 	int		fd_infile;

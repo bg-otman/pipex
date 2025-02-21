@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 16:09:28 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/14 18:48:08 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/20 23:18:47 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,8 @@ void	clean_child_ressources(t_data *data)
 
 void	clean_and_exit(t_data *data, int status)
 {
-	if (data->cmd1)
-		free_arr(data->cmd1);
-	if (data->cmd2)
-		free_arr(data->cmd2);
+	if (data->cmd)
+		free_arr(data->cmd);
 	if (data->paths)
 		free_arr(data->paths);
 	close_fd(data->fd_infile);

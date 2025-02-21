@@ -1,9 +1,10 @@
 SRCS = mandatory/main.c mandatory/clean_and_exit.c mandatory/verify_cmds.c mandatory/helper_functions.c mandatory/get_execs_path.c
 SRCS_BNS = bonus/main_bonus.c bonus/verify_cmds_bonus.c bonus/helper_functions_bonus.c bonus/clean_and_exit_bonus.c \
 	bonus/process_cmds_bonus.c get_next_line/get_next_line.c get_next_line/get_next_line_utils.c bonus/get_execs_path_bonus.c
-CC = cc
 CFLAGS = -Wall -Wextra -Werror
 LIBFT = libft/libft.a
+INC = mandatory/pipex.h
+INC_BNS = bonus/pipex_bonus.h get_next_line/get_next_line.h
 OBJS = $(SRCS:.c=.o)
 OBJS_BNS = $(SRCS_BNS:.c=.o)
 NAME = pipex
@@ -22,7 +23,7 @@ bonus: .bonus
 $(LIBFT) :
 	@$(MAKE) -C libft
 
-%.o: %.c
+%.o: %.c $(INC) $(INC_BNS)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:

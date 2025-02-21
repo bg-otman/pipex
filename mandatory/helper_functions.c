@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/10 19:06:14 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 21:54:41 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/20 22:46:16 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,39 @@
 
 void	put_error(char *msg, char *cmd)
 {
-	ft_putstr_fd(msg, 2);
-	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd("\n", 2);
+	char	*full_msg;
+	char	*temp;
+
+	temp = ft_strjoin(msg, cmd);
+	if (!temp)
+		return ;
+	full_msg = ft_strjoin(temp, "\n");
+	free(temp);
+	if (!full_msg)
+		return ;
+	write(2, full_msg, ft_strlen(full_msg));
+	free(full_msg);
+}
+
+void	wait_for_children(t_data *data, pid_t last_cpid)
+{
+	int		i;
+	int		status;
+	pid_t	cpid;
+
+	i = 0;
+	while (i < 2)
+	{
+		cpid = wait(&status);
+		if (cpid == -1)
+		{
+			perror("wait");
+			clean_and_exit(data, EXIT_FAILURE);
+		}
+		if (cpid == last_cpid && WIFEXITED(status))
+			data->exit_status = WEXITSTATUS(status);
+		i++;
+	}
 }
 
 int	check_cmds_path(char *path, char *cmd)
@@ -39,7 +69,7 @@ void	open_files(t_data *data, char *av[])
 	if (data->fd_outfile == -1)
 	{
 		perror("outfile");
-		exit(EXIT_FAILURE);
+		clean_and_exit(data, EXIT_FAILURE);
 	}
 	data->fd_infile = open(av[1], O_RDONLY);
 	if (data->fd_infile == -1)
@@ -48,10 +78,7 @@ void	open_files(t_data *data, char *av[])
 		data->fd_infile = open("/dev/null", O_RDONLY);
 		data->invalid_infile = 1;
 		if (data->fd_infile == -1)
-		{
-			close(data->fd_outfile);
-			exit(EXIT_FAILURE);
-		}
+			clean_and_exit(data, EXIT_FAILURE);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: obouizi <obouizi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/09 15:18:33 by obouizi           #+#    #+#             */
-/*   Updated: 2025/02/17 21:24:31 by obouizi          ###   ########.fr       */
+/*   Updated: 2025/02/21 18:08:26 by obouizi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	set_cmd_path(char **cmd, char *path, int *exist_flag)
 {
 	char	*temp;
 
-	if ((*cmd)[0] == '/')
+	if (ft_search(*cmd, '/'))
 	{
 		*exist_flag = 1;
 		return ;
@@ -75,23 +75,21 @@ char	**split_cmd(char *cmd)
 		else
 			handle_normal_word(cmd, cmd_arg, &i, &k);
 	}
-	if (cmd_arg[0] == NULL)
-	{
-		free_arr(cmd_arg);
-		cmd_arg = ft_split("/", ' ');
-	}
-	else
-		cmd_arg[k] = NULL;
+	cmd_arg[k] = NULL;
 	return (cmd_arg);
 }
 
-void	verify_cmds(t_data *data, char *cmd1, char *cmd2)
+void	verify_cmd(t_data *data, char *cmd)
 {
 	int	i;
 
-	data->cmd1 = split_cmd(cmd1);
-	data->cmd2 = split_cmd(cmd2);
-	if (!data->cmd1 || !data->cmd2)
+	if (!ft_strcmp(cmd, ""))
+		data->cmd = ft_split(".", ' ');
+	else if (is_all_space(cmd))
+		data->cmd = ft_split("\t", ' ');
+	else
+		data->cmd = split_cmd(cmd);
+	if (!data->cmd)
 	{
 		perror("Allocation fail");
 		clean_and_exit(data, EXIT_FAILURE);
@@ -99,8 +97,7 @@ void	verify_cmds(t_data *data, char *cmd1, char *cmd2)
 	i = 0;
 	while (data->paths[i])
 	{
-		set_cmd_path(&data->cmd1[0], data->paths[i], &data->exist_cmd1);
-		set_cmd_path(&data->cmd2[0], data->paths[i], &data->exist_cmd2);
+		set_cmd_path(&data->cmd[0], data->paths[i], &data->exist_cmd);
 		i++;
 	}
 }
